@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management API Documentation</title>
+    <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #64748b;
+            --light-gray: #e2e8f0;
+            --border: #cbd5e1;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: #ffffff;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid var(--light-gray);
+        }
+        
+        h1 {
+            color: var(--primary);
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .subtitle {
+            color: var(--gray);
+            font-size: 1.1rem;
+        }
+        
+        .endpoint {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .endpoint-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .method-post {
+            background: #fffbeb;
+            color: #b45309;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .method-get {
+            background: #dbeafe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .method-patch {
+            background: #ecfdf5;
+            color: #047857;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .method-delete {
+            background: #fef2f2;
+            color: #dc2626;
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .endpoint-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .endpoint-body {
+            padding: 1.5rem;
+        }
+        
+        .section-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin: 1.5rem 0 1rem 0;
+            color: var(--primary-dark);
+        }
+        
+        .request-body, .success-response, .error-response, .pagination-info {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+        }
+        
+        .json {
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 0.9rem;
+            line-height: 1.4;
+            color: #2d3748;
+        }
+        
+        .field-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        
+        .field-table th {
+            background: var(--light-gray);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .field-table td {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .required {
+            color: var(--danger);
+            font-weight: bold;
+        }
+        
+        .status-code {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .status-200 {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-201 {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-400 {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+        
+        .status-401 {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+        
+        .status-403 {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+        
+        .status-404 {
+            background: #ffedd5;
+            color: #c2410c;
+        }
+        
+        .curl-example {
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+        
+        .env-vars {
+            background: var(--light);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+        
+        .env-vars h4 {
+            margin-bottom: 0.5rem;
+            color: var(--primary-dark);
+        }
+        
+        .env-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .env-item:last-child {
+            border-bottom: none;
+        }
+        
+        .env-name {
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .env-default {
+            color: var(--gray);
+            font-style: italic;
+        }
+        
+        .auth-required {
+            display: inline-block;
+            background: #e0f2fe;
+            color: #0369a1;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            margin-left: 0.5rem;
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 2px solid var(--light-gray);
+            color: var(--gray);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .endpoint-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Task Management API</h1>
+            <p class="subtitle">Complete API Documentation for Authentication & Task Management</p>
+        </header>
+
+        <!-- AUTHENTICATION SECTION -->
+        <h2 style="color: var(--primary-dark); margin: 2rem 0 1.5rem 0; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">🔐 Authentication</h2>
+
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <div class="method-post">POST</div>
+                <div class="endpoint-title">/auth/register</div>
+            </div>
+            <div class="endpoint-body">
+                <p>Register a new user account</p>
+                
+                <h3 class="section-title">Request Body</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>name</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Full name of user</td>
+                        </tr>
+                        <tr>
+                            <td><code>email</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Valid email address</td>
+                        </tr>
+                        <tr>
+                            <td><code>password</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Minimum 6 characters</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="request-body">
+                    <pre class="json">{
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "secure123"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Success Response <span class="status-code status-201">201 Created</span></h3>
+                <div class="success-response">
+                    <pre class="json">{
+  "message": "User registered successfully"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Error Responses</h3>
+                <div class="error-response">
+                    <p><span class="status-code status-400">400 Bad Request</span> - Validation failed (missing fields, invalid email, short password)</p>
+                    <p><span class="status-code status-401">401 Unauthorized</span> - Email already exists</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <div class="method-post">POST</div>
+                <div class="endpoint-title">/auth/login</div>
+            </div>
+            <div class="endpoint-body">
+                <p>Login to existing user account</p>
+                
+                <h3 class="section-title">Request Body</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>email</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Registered email address</td>
+                        </tr>
+                        <tr>
+                            <td><code>password</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>User password</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="request-body">
+                    <pre class="json">{
+  "email": "john@example.com",
+  "password": "secure123"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Success Response <span class="status-code status-200">200 OK</span></h3>
+                <div class="success-response">
+                    <pre class="json">{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Error Responses</h3>
+                <div class="error-response">
+                    <p><span class="status-code status-400">400 Bad Request</span> - Validation failed (missing fields, invalid email)</p>
+                    <p><span class="status-code status-401">401 Unauthorized</span> - Invalid credentials</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- TASK MANAGEMENT SECTION -->
+        <h2 style="color: var(--primary-dark); margin: 2rem 0 1.5rem 0; border-bottom: 1px solid var(--border); padding-bottom: 0.5rem;">📋 Task Management</h2>
+        <p style="margin-bottom: 1.5rem; color: var(--gray);"><strong>Note:</strong> All task endpoints require authentication with <code>Authorization: Bearer &lt;token&gt;</code> header</p>
+
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <div class="method-post">POST</div>
+                <div class="endpoint-title">/tasks <span class="auth-required">Auth Required</span></div>
+            </div>
+            <div class="endpoint-body">
+                <p>Create a new task</p>
+                
+                <h3 class="section-title">Request Body</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>title</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Task title</td>
+                        </tr>
+                        <tr>
+                            <td><code>description</code></td>
+                            <td>string</td>
+                            <td>No</td>
+                            <td>Task description</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="request-body">
+                    <pre class="json">{
+  "title": "Complete technical test",
+  "description": "Finish all API endpoints"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Success Response <span class="status-code status-201">201 Created</span></h3>
+                <div class="success-response">
+                    <pre class="json">{
+  "id": "a1b2c3d4-...",
+  "title": "Complete technical test",
+  "status": "TODO",
+  "created_at": "2026-01-11T14:30:00.000Z"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Error Responses</h3>
+                <div class="error-response">
+                    <p><span class="status-code status-400">400 Bad Request</span> - Validation failed (missing title)</p>
+                    <p><span class="status-code status-401">401 Unauthorized</span> - Invalid or missing token</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <div class="method-get">GET</div>
+                <div class="endpoint-title">/tasks <span class="auth-required">Auth Required</span></div>
+            </div>
+            <div class="endpoint-body">
+                <p>Get all tasks for authenticated user with pagination</p>
+                
+                <h3 class="section-title">Query Parameters</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Default</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>page</code></td>
+                            <td>number</td>
+                            <td>No</td>
+                            <td>1</td>
+                            <td>Page number</td>
+                        </tr>
+                        <tr>
+                            <td><code>limit</code></td>
+                            <td>number</td>
+                            <td>No</td>
+                            <td>10</td>
+                            <td>Items per page (max 100)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">Success Response <span class="status-code status-200">200 OK</span></h3>
+                <div class="success-response">
+                    <pre class="json">{
+  "data": [
+    {
+      "id": "a1b2c3d4-...",
+      "title": "Complete technical test",
+      "status": "TODO",
+      "created_at": "2026-01-11T14:30:00.000Z"
+    }
+  ],
+  "meta": {
+    "total": 1,
+    "page": 1,
+    "per_page": 10,
+    "last_page": 1
+  }
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Error Responses</h3>
+                <div class="error-response">
+                    <p><span class="status-code status-401">401 Unauthorized</span> - Invalid or missing token</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <div class="method-patch">PATCH</div>
+                <div class="endpoint-title">/tasks/:id <span class="auth-required">Auth Required</span></div>
+            </div>
+            <div class="endpoint-body">
+                <p>Update task status</p>
+                
+                <h3 class="section-title">Path Parameters</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>id</code></td>
+                            <td>UUID</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Task ID</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">Request Body</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Field</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>status</code></td>
+                            <td>string</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Must be: TODO, IN_PROGRESS, or DONE</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <div class="request-body">
+                    <pre class="json">{
+  "status": "IN_PROGRESS"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Success Response <span class="status-code status-200">200 OK</span></h3>
+                <div class="success-response">
+                    <pre class="json">{
+  "id": "a1b2c3d4-...",
+  "status": "IN_PROGRESS"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Error Responses</h3>
+                <div class="error-response">
+                    <p><span class="status-code status-400">400 Bad Request</span> - Invalid status or invalid UUID</p>
+                    <p><span class="status-code status-401">401 Unauthorized</span> - Invalid or missing token</p>
+                    <p><span class="status-code status-403">403 Forbidden</span> - Task belongs to another user</p>
+                    <p><span class="status-code status-404">404 Not Found</span> - Task not found</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="endpoint">
+            <div class="endpoint-header">
+                <div class="method-delete">DELETE</div>
+                <div class="endpoint-title">/tasks/:id <span class="auth-required">Auth Required</span></div>
+            </div>
+            <div class="endpoint-body">
+                <p>Delete a task</p>
+                
+                <h3 class="section-title">Path Parameters</h3>
+                <table class="field-table">
+                    <thead>
+                        <tr>
+                            <th>Parameter</th>
+                            <th>Type</th>
+                            <th>Required</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>id</code></td>
+                            <td>UUID</td>
+                            <td><span class="required">Yes</span></td>
+                            <td>Task ID</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3 class="section-title">Success Response <span class="status-code status-200">200 OK</span></h3>
+                <div class="success-response">
+                    <pre class="json">{
+  "message": "Task deleted"
+}</pre>
+                </div>
+                
+                <h3 class="section-title">Error Responses</h3>
+                <div class="error-response">
+                    <p><span class="status-code status-400">400 Bad Request</span> - Invalid UUID</p>
+                    <p><span class="status-code status-401">401 Unauthorized</span> - Invalid or missing token</p>
+                    <p><span class="status-code status-403">403 Forbidden</span> - Task belongs to another user</p>
+                    <p><span class="status-code status-404">404 Not Found</span> - Task not found</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Base URL -->
+        <div class="env-vars">
+            <h4>Base URL</h4>
+            <p><code>http://localhost:3000</code></p>
+        </div>
+
+        <!-- Environment Variables -->
+        <div class="env-vars">
+            <h4>Environment Variables</h4>
+            <div class="env-item">
+                <span class="env-name">JWT_SECRET</span>
+                <span class="env-default">Required - Secret key for JWT signing</span>
+            </div>
+            <div class="env-item">
+                <span class="env-name">JWT_EXPIRES_IN</span>
+                <span class="env-default">3600s - Token expiration time</span>
+            </div>
+        </div>
+
+        <!-- cURL Examples -->
+        <h3 class="section-title">cURL Examples</h3>
+        <div class="curl-example">
+            <code># Register<br>
+curl -X POST http://localhost:3000/auth/register \<br>
+&nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+&nbsp;&nbsp;-d '{"name":"John Doe","email":"john@example.com","password":"secure123"}'<br><br>
+
+# Login<br>
+curl -X POST http://localhost:3000/auth/login \<br>
+&nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+&nbsp;&nbsp;-d '{"email":"john@example.com","password":"secure123"}'<br><br>
+
+# Create Task (use token from login)<br>
+curl -X POST http://localhost:3000/tasks \<br>
+&nbsp;&nbsp;-H "Authorization: Bearer &lt;your-token&gt;" \<br>
+&nbsp;&nbsp;-H "Content-Type: application/json" \<br>
+&nbsp;&nbsp;-d '{"title":"New Task","description":"Task description"}'<br><br>
+
+# Get Tasks<br>
+curl -X GET "http://localhost:3000/tasks?page=1&limit=5" \<br>
+&nbsp;&nbsp;-H "Authorization: Bearer &lt;your-token&gt;"</code>
+        </div>
+
+        <footer>
+            <p>Task Management API Documentation • Complete Technical Test Implementation</p>
+        </footer>
+    </div>
+</body>
+</html>

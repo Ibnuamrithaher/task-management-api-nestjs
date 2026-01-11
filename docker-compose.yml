@@ -1,0 +1,43 @@
+# docker-compose.yml
+services:
+  # Database
+  db:
+    image: postgres:14-alpine
+    container_name: task_management_db
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - task_network
+
+  # Application
+  app:
+    build: .
+    container_name: task_management_api
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=db
+      - DB_PORT=${DB_PORT}
+      - DB_USERNAME=${DB_USERNAME}
+      - DB_PASSWORD=${DB_PASSWORD}
+      - DB_NAME=${DB_NAME}
+      - JWT_SECRET=${JWT_SECRET}
+      - JWT_EXPIRES_IN=${JWT_EXPIRES_IN}
+    depends_on:
+      - db
+    networks:
+      - task_network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  task_network:
+    driver: bridge
