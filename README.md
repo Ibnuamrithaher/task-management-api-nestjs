@@ -23,6 +23,34 @@
    DB_NAME=task_management
    JWT_SECRET=your_secret_key
 
+## Schema Database
+
+Aplikasi menggunakan **TypeORM** dengan `synchronize: true`, sehingga tabel akan dibuat otomatis saat aplikasi pertama kali dijalankan.
+
+### Tabel `users`
+
+| Kolom       | Tipe        | Keterangan             |
+|------------|------------|-----------------------|
+| `id`       | UUID       | Primary Key           |
+| `name`     | VARCHAR    |                       |
+| `email`    | VARCHAR    | Unique                |
+| `password` | VARCHAR    |                       |
+| `created_at` | TIMESTAMP |                       |
+| `updated_at` | TIMESTAMP |                       |
+
+### Tabel `tasks`
+
+| Kolom         | Tipe         | Keterangan                       |
+|---------------|-------------|---------------------------------|
+| `id`          | UUID        | Primary Key                     |
+| `title`       | VARCHAR     | NOT NULL                        |
+| `description` | TEXT        | Nullable                        |
+| `status`      | ENUM        | 'TODO', 'IN_PROGRESS', 'DONE'   |
+| `user_id`     | UUID        | Foreign Key → `users.id`        |
+| `created_at`  | TIMESTAMP   |                                 |
+| `updated_at`  | TIMESTAMP   |                                 |
+
+
 ## Cara menjalankan aplikasi (tanpa Docker)
 
 npm run start:dev
