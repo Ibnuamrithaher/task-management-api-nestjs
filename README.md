@@ -65,7 +65,7 @@ docker-compose up --build
 
 
 ## Contoh request API
-Dokumentasi lengkap juga dapat dilihat langsung pada http://localhost:3000 saat aplikasi berjalan (Hanya untuk non docker)
+Dokumentasi lengkap juga dapat dilihat langsung pada http://localhost:3000/docs saat aplikasi berjalan (Hanya untuk non docker)
 ### Register
 curl -X POST http://localhost:3000/auth/register \
   -H "Content-Type: application/json" \
